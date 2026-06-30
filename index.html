@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Şifa Eczanesi - Nöbetçi Eczaneler</title>
+<style>
+  body{margin:0;background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif;
+    height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
+  .baslik{font-size:54px;font-weight:bold;margin-bottom:10px;}
+  .altbaslik{font-size:28px;color:#ccc;margin-bottom:40px;}
+  .hava{position:absolute;top:30px;right:40px;font-size:30px;text-align:right;}
+  .liste{width:80%;}
+  .kart{background:#111;border-radius:16px;padding:30px;margin-bottom:20px;text-align:center;}
+  .ad{font-size:40px;font-weight:bold;}
+  .adres{font-size:24px;color:#bbb;margin-top:10px;line-height:1.4;}
+  .tel{font-size:28px;color:#9fd3ff;margin-top:10px;}
+  .saat{position:absolute;bottom:30px;font-size:24px;color:#888;}
+  .yukleniyor{font-size:24px;color:#888;}
+</style>
+</head>
+<body>
+
+<div class="hava" id="hava">⏳</div>
+<div class="baslik">Şifa Eczanesi</div>
+<div class="altbaslik" id="tarih">Bugün Nöbetçi Eczaneler</div>
+<div class="liste" id="liste"><div class="yukleniyor">Yükleniyor...</div></div>
+<div class="saat" id="saat"></div>
+
+<script>
+// ↓↓↓ Apps Script'i yeniden dağıttıktan sonra aldığın URL'i buraya yapıştır ↓↓↓
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6MJMdOqGI5bdVOL-EciKhNV5y80e_hS5vghyQGm-yWS7bKcS0DU1N510SydYRLRWk/exec";
+
+function saatGuncelle() {
+  document.getElementById("saat").innerText = new Date().toLocaleTimeString("tr-TR");
+}
+setInterval(saatGuncelle, 1000);
+saatGuncelle();
+
+function tarihYaz() {
+  const simdi = new Date();
+  const str = simdi.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+  document.getElementById("tarih").innerText = "Bugün Nöbetçi Eczaneler — " + str;
+}
+tarihYaz();
+
+async function veriYukle() {
+  try {
+    const res = await fetch(APPS_SCRIPT_URL);
+    const data = await res.json();
+
+    // Hava durumu
+    const hava = data.hava || {};
+    document.getElementById("hava").innerText = (hava.ikon || "☀️") + " " + (hava.sicaklik ?? "--") + "°C";
+
+    // Eczane listesi
+    const liste = document.getElementById("liste");
+    const eczaneler = data.eczaneler || [];
+    if (eczaneler.length === 0) {
+      liste.innerHTML = '<div class="kart">Bugün için nöbetçi eczane bilgisi bulunamadı.</div>';
+      return;
+    }
+    liste.innerHTML = eczaneler.map(e => `
+      <div class="kart">
+        <div class="ad">${e.ad}</div>
+        ${e.adres ? `<div class="adres">${e.adres}</div>` : ""}
+        ${e.tel ? `<div class="tel">${e.tel}</div>` : ""}
+      </div>
+    `).join("");
+  } catch (err) {
+    document.getElementById("liste").innerHTML = '<div class="kart">Veri alınamadı, tekrar denenecek...</div>';
+  }
+}
+
+veriYukle();
+setInterval(veriYukle, 10 * 60 * 1000); // 10 dakikada bir tazele
+</script>
+
+</body>
+</html>
