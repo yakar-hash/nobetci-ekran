@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+<title>Şifa Eczanesi – Hava Durumu</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; }
+
+/* ── TEMA DEĞİŞKENLERİ (JS tarafından güncellenir) ── */
+:root {
+  --c1: #1a1a2e; --c2: #16213e; --c3: #0f3460;
+  --accent: #e0a800;
+  --text: #ffffff;
+  --text-dim: rgba(255,255,255,0.55);
+  --text-mid: rgba(255,255,255,0.75);
+  --glass: rgba(255,255,255,0.10);
+  --glass-border: rgba(255,255,255,0.18);
+}
+
+body {
+  background: linear-gradient(160deg, var(--c1) 0%, var(--c2) 50%, var(--c3) 100%);
+  color: var(--text);
+  transition: background 2s ease;
+}
+
+/* ── ARKA PLAN ANIMASYONLARI ── */
+.bg-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+
+/* Güneş */
+.sun {
+  position: absolute;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,220,80,0.5) 0%, rgba(255,160,0,0.2) 50%, transparent 70%);
+  top: 8%; right: -5%;
+  animation: sunPulse 6s ease-in-out infinite;
+  display: none;
+}
+@keyframes sunPulse {
+  0%, 100% { transform: scale(1);    opacity: 0.8; }
+  50%       { transform: scale(1.08); opacity: 1;   }
+}
+
+/* Bulutlar */
+.cloud {
+  position: absolute;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.08);
+  filter: blur(2px);
+  display: none;
+  animation: cloudDrift linear infinite;
+}
+.cloud1 { width: 200px; height: 60px; top: 12%; left: -220px; animation-duration: 35s; animation-delay: 0s; }
+.cloud2 { width: 160px; height: 50px; top: 22%; left: -180px; animation-duration: 45s; animation-delay: -15s; }
+.cloud3 { width: 240px; height: 70px; top: 8%;  left: -260px; animation-duration: 40s; animation-delay: -25s; }
+@keyframes cloudDrift { from { left: -300px; } to { left: 110%; } }
+
+/* Yağmur */
+.rain-container { position: absolute; inset: 0; display: none; overflow: hidden; }
+.raindrop {
+  position: absolute;
+  width: 1.5px;
+  background: linear-gradient(to bottom, transparent, rgba(150,200,255,0.6));
+  border-radius: 2px;
+  animation: fall linear infinite;
+}
+@keyframes fall { from { transform: translateY(-100px); } to { transform: translateY(110vh); } }
+
+/* Yıldızlar (gece) */
+.stars { position: absolute; inset: 0; display: none; }
+.star {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle ease-in-out infinite;
+}
+@keyframes twinkle { 0%,100%{opacity:0.2;} 50%{opacity:1;} }
+
+/* ── LAYOUT ── */
+.screen {
+  position: relative; z-index: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 5vh 8vw;
+  gap: 0;
+}
+
+/* ── ÜST: Marka ── */
+.marka-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 2.5vh;
+  border-bottom: 1px solid var(--glass-border);
+  flex-shrink: 0;
+}
+.marka-sol { display: flex; align-items: center; gap: 12px; }
+.havan-svg { opacity: 0.7; }
+.marka-isim {
+  font-size: clamp(18px, 3vw, 26px);
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.3px;
+}
+.marka-sehir {
+  font-size: clamp(10px, 1.6vw, 14px);
+  font-weight: 400;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.saat-chip {
+  font-size: clamp(18px, 3vw, 26px);
+  font-weight: 200;
+  letter-spacing: 3px;
+  color: var(--text-mid);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── BUGÜN BLOĞU ── */
+.bugun {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.5vh;
+  padding: 2vh 0;
+}
+
+.hava-ikon-buyuk {
+  font-size: clamp(80px, 16vw, 130px);
+  line-height: 1;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.3));
+  animation: iconFloat 4s ease-in-out infinite;
+}
+@keyframes iconFloat {
+  0%,100% { transform: translateY(0);   }
+  50%      { transform: translateY(-8px); }
+}
+
+.sicaklik-ana {
+  font-size: clamp(90px, 20vw, 160px);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -4px;
+  color: var(--text);
+  text-shadow: 0 4px 32px rgba(0,0,0,0.2);
+}
+
+.hava-aciklama {
+  font-family: 'Lora', serif;
+  font-size: clamp(22px, 4vw, 36px);
+  font-style: italic;
+  color: var(--text-mid);
+  letter-spacing: 0.5px;
+}
+
+.hissedilen {
+  font-size: clamp(14px, 2.2vw, 20px);
+  font-weight: 300;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+/* Detay chip'leri */
+.detay-satirlari {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2vh;
+  width: 100%;
+  align-items: center;
+}
+
+.chip-satir {
+  display: flex;
+  gap: 2vw;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 50px;
+  padding: clamp(8px,1.2vh,13px) clamp(14px,2.5vw,24px);
+  font-size: clamp(13px, 2vw, 18px);
+  font-weight: 400;
+  color: var(--text);
+  white-space: nowrap;
+}
+.chip-ikon { font-size: clamp(14px, 2.2vw, 20px); }
+
+/* Gün doğumu/batımı */
+.gunler-satir {
+  display: flex;
+  gap: 3vw;
+  justify-content: center;
+}
+.gun-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: clamp(13px, 2vw, 18px);
+  color: var(--text-dim);
+}
+
+/* ── 7 GÜNLÜK TAHMİN ── */
+.tahmin-baslik {
+  font-size: clamp(10px, 1.6vw, 14px);
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 1.5vh 0 1.2vh;
+  flex-shrink: 0;
+  border-top: 1px solid var(--glass-border);
+}
+
+.tahmin-serit {
+  display: flex;
+  gap: 1.5vw;
+  justify-content: center;
+  flex-shrink: 0;
+  padding-bottom: 1vh;
+}
+
+.tahmin-kart {
+  flex: 1;
+  max-width: 120px;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: clamp(10px,1.8vh,18px) clamp(6px,1vw,12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1vh;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: cardIn 0.5s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+.tahmin-kart:nth-child(1) { animation-delay: 0.1s; }
+.tahmin-kart:nth-child(2) { animation-delay: 0.18s; }
+.tahmin-kart:nth-child(3) { animation-delay: 0.26s; }
+.tahmin-kart:nth-child(4) { animation-delay: 0.34s; }
+.tahmin-kart:nth-child(5) { animation-delay: 0.42s; }
+.tahmin-kart:nth-child(6) { animation-delay: 0.50s; }
+.tahmin-kart:nth-child(7) { animation-delay: 0.58s; }
+@keyframes cardIn { to { opacity: 1; transform: translateY(0); } }
+
+.tahmin-gun {
+  font-size: clamp(11px, 1.7vw, 15px);
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+.tahmin-ikon { font-size: clamp(24px, 4.5vw, 38px); line-height: 1; }
+.tahmin-max {
+  font-size: clamp(16px, 2.8vw, 24px);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1;
+}
+.tahmin-min {
+  font-size: clamp(12px, 2vw, 17px);
+  font-weight: 300;
+  color: var(--text-dim);
+}
+.tahmin-yagis {
+  font-size: clamp(10px, 1.6vw, 14px);
+  color: #7ec8f0;
+  font-weight: 400;
+}
+
+.yukleniyor {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; font-size: 16px; letter-spacing: 4px;
+  color: var(--text-dim); text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <div class="sun" id="sun"></div>
+  <div class="cloud cloud1" id="c1"></div>
+  <div class="cloud cloud2" id="c2"></div>
+  <div class="cloud cloud3" id="c3"></div>
+  <div class="rain-container" id="rain"></div>
+  <div class="stars" id="stars"></div>
+</div>
+
+<div class="screen">
+
+  <!-- Marka bar -->
+  <div class="marka-bar">
+    <div class="marka-sol">
+      <svg class="havan-svg" width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect x="58" y="14" width="7" height="34" rx="3.5" fill="rgba(255,255,255,0.7)"/>
+        <ellipse cx="61.5" cy="13" rx="6" ry="4" fill="rgba(255,255,255,0.5)"/>
+        <path d="M14 66 Q17 50 50 50 Q83 50 86 66 L81 83 Q76 91 50 91 Q24 91 19 83 Z"
+              fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M14 66 Q17 50 50 50 Q83 50 86 66"
+              fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="marka-isim">Şifa Eczanesi</div>
+        <div class="marka-sehir">Salihli · Hava Durumu</div>
+      </div>
+    </div>
+    <div class="saat-chip" id="saat">--:--:--</div>
+  </div>
+
+  <!-- Bugün -->
+  <div class="bugun" id="bugun">
+    <div class="yukleniyor">yükleniyor</div>
+  </div>
+
+  <!-- 7 günlük -->
+  <div class="tahmin-baslik">7 Günlük Tahmin</div>
+  <div class="tahmin-serit" id="tahmin-serit"></div>
+
+</div>
+
+<script>
+const LAT = 38.4815, LON = 28.1411;
+const GUNLER = ["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"];
+
+// Tema paleti
+const TEMALAR = {
+  gunduz_acik:   { c1:"#1B4F8A", c2:"#2874C8", c3:"#56A0D3", accent:"#FFD700", sun:true  },
+  gunduz_bulut:  { c1:"#3A4A5C", c2:"#5A6E82", c3:"#7A8FA0", accent:"#C0D0E0", sun:false },
+  yagmur:        { c1:"#1A2535", c2:"#243040", c3:"#1E3A52", accent:"#7EC8F0", rain:true  },
+  gece_acik:     { c1:"#0B0C1E", c2:"#111230", c3:"#1A1F45", accent:"#C8A96E", stars:true },
+  gece_bulut:    { c1:"#141420", c2:"#1E1E30", c3:"#262638", accent:"#8090A0"             },
+  kar:           { c1:"#C8D8E8", c2:"#D8E8F4", c3:"#E8F2FC", accent:"#90B8D8"             },
+};
+
+function temayiUygula(tema) {
+  const r = document.documentElement.style;
+  r.setProperty("--c1", tema.c1);
+  r.setProperty("--c2", tema.c2);
+  r.setProperty("--c3", tema.c3);
+  r.setProperty("--accent", tema.accent || "#ffffff");
+
+  document.getElementById("sun").style.display   = tema.sun   ? "block" : "none";
+  document.getElementById("c1").style.display    = tema.bulut ? "block" : "none";
+  document.getElementById("c2").style.display    = tema.bulut ? "block" : "none";
+  document.getElementById("c3").style.display    = tema.bulut ? "block" : "none";
+  document.getElementById("stars").style.display = tema.stars ? "block" : "none";
+
+  const rain = document.getElementById("rain");
+  rain.innerHTML = "";
+  if (tema.rain) {
+    rain.style.display = "block";
+    for (let i = 0; i < 60; i++) {
+      const d = document.createElement("div");
+      d.className = "raindrop";
+      d.style.left   = Math.random() * 100 + "vw";
+      d.style.height = (Math.random() * 20 + 10) + "px";
+      d.style.animationDuration  = (Math.random() * 0.8 + 0.6) + "s";
+      d.style.animationDelay     = (Math.random() * 2) + "s";
+      d.style.opacity = Math.random() * 0.5 + 0.3;
+      rain.appendChild(d);
+    }
+  } else {
+    rain.style.display = "none";
+  }
+
+  // Yıldızlar
+  const stars = document.getElementById("stars");
+  if (tema.stars && stars.children.length === 0) {
+    for (let i = 0; i < 80; i++) {
+      const s = document.createElement("div");
+      s.className = "star";
+      s.style.left = Math.random() * 100 + "%";
+      s.style.top  = Math.random() * 60  + "%";
+      s.style.animationDuration = (Math.random() * 3 + 2) + "s";
+      s.style.animationDelay    = (Math.random() * 4) + "s";
+      stars.appendChild(s);
+    }
+  }
+}
+
+function kodTema(kod, gece) {
+  if (kod === 0) return gece ? TEMALAR.gece_acik  : TEMALAR.gunduz_acik;
+  if (kod <= 3)  return gece ? TEMALAR.gece_bulut : { ...TEMALAR.gunduz_bulut, bulut: true };
+  if (kod <= 48) return gece ? TEMALAR.gece_bulut : { ...TEMALAR.gunduz_bulut, bulut: true };
+  if (kod <= 67) return TEMALAR.yagmur;
+  if (kod <= 77) return TEMALAR.kar;
+  if (kod <= 99) return TEMALAR.yagmur;
+  return TEMALAR.gunduz_bulut;
+}
+
+function kodIkon(kod, gece) {
+  if (kod === 0)       return gece ? "🌙" : "☀️";
+  if (kod <= 2)        return gece ? "🌙" : "⛅";
+  if (kod === 3)       return "☁️";
+  if (kod <= 48)       return "🌫️";
+  if (kod <= 55)       return "🌦️";
+  if (kod <= 67)       return "🌧️";
+  if (kod <= 77)       return "❄️";
+  if (kod <= 82)       return "🌧️";
+  return "⛈️";
+}
+
+function kodAciklama(kod) {
+  if (kod === 0)  return "Açık ve güneşli";
+  if (kod <= 2)   return "Parçalı bulutlu";
+  if (kod === 3)  return "Kapalı hava";
+  if (kod <= 48)  return "Sisli";
+  if (kod <= 55)  return "Hafif çisenti";
+  if (kod <= 67)  return "Yağmurlu";
+  if (kod <= 77)  return "Karlı";
+  if (kod <= 82)  return "Sağanak yağışlı";
+  return "Fırtınalı";
+}
+
+function yonAdi(derece) {
+  const y = ["K","KD","D","GD","G","GB","B","KB"];
+  return y[Math.round(derece / 45) % 8];
+}
+
+// Saat
+function saatGuncelle() {
+  document.getElementById("saat").innerText = new Date().toLocaleTimeString("tr-TR");
+}
+setInterval(saatGuncelle, 1000);
+saatGuncelle();
+
+async function veriYukle() {
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}` +
+      `&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m,` +
+      `wind_speed_10m,wind_direction_10m,precipitation,uv_index` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,` +
+      `sunrise,sunset` +
+      `&timezone=Europe%2FIstanbul&forecast_days=7`;
+
+    const res  = await fetch(url);
+    const data = await res.json();
+    const c    = data.current;
+    const d    = data.daily;
+
+    // Gece mi?
+    const simdi    = new Date();
+    const dogus    = new Date(d.sunrise[0]);
+    const batis    = new Date(d.sunset[0]);
+    const geceМi   = simdi < dogus || simdi > batis;
+
+    // Tema
+    temayiUygula(kodTema(c.weather_code, geceМi));
+
+    // Gün doğumu/batımı
+    const dogusStr = dogus.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" });
+    const batisStr = batis.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" });
+
+    // Bugün bloğu
+    document.getElementById("bugun").innerHTML = `
+      <div class="hava-ikon-buyuk">${kodIkon(c.weather_code, geceМi)}</div>
+      <div class="sicaklik-ana">${Math.round(c.temperature_2m)}°</div>
+      <div class="hava-aciklama">${kodAciklama(c.weather_code)}</div>
+      <div class="hissedilen">Hissedilen ${Math.round(c.apparent_temperature)}°</div>
+      <div class="detay-satirlari">
+        <div class="chip-satir">
+          <div class="chip"><span class="chip-ikon">💧</span> %${c.relative_humidity_2m} Nem</div>
+          <div class="chip"><span class="chip-ikon">💨</span> ${Math.round(c.wind_speed_10m)} km/s ${yonAdi(c.wind_direction_10m)}</div>
+          <div class="chip"><span class="chip-ikon">☂️</span> ${Math.round(c.precipitation || 0)} mm</div>
+          <div class="chip"><span class="chip-ikon">🌡️</span> UV ${Math.round(c.uv_index || 0)}</div>
+        </div>
+        <div class="gunler-satir">
+          <div class="gun-item">🌅 ${dogusStr}</div>
+          <div class="gun-item">🌇 ${batisStr}</div>
+        </div>
+      </div>
+    `;
+
+    // 7 günlük tahmin
+    const serit = document.getElementById("tahmin-serit");
+    serit.innerHTML = d.weather_code.map((kod, i) => {
+      const tarih = new Date(d.sunrise[i]);
+      const gunAdi = i === 0 ? "Bugün" : GUNLER[tarih.getDay()];
+      return `
+        <div class="tahmin-kart">
+          <div class="tahmin-gun">${gunAdi}</div>
+          <div class="tahmin-ikon">${kodIkon(kod, false)}</div>
+          <div class="tahmin-max">${Math.round(d.temperature_2m_max[i])}°</div>
+          <div class="tahmin-min">${Math.round(d.temperature_2m_min[i])}°</div>
+          <div class="tahmin-yagis">%${d.precipitation_probability_max[i]||0}</div>
+        </div>
+      `;
+    }).join("");
+
+  } catch(e) {
+    document.getElementById("bugun").innerHTML = '<div class="yukleniyor">Veri alınamadı</div>';
+  }
+}
+
+veriYukle();
+setInterval(veriYukle, 30 * 60 * 1000); // 30 dakikada bir güncelle
+</script>
+</body>
+</html>
