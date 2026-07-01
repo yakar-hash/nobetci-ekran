@@ -3,78 +3,378 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Şifa Eczanesi - Nöbetçi Eczaneler</title>
+<title>Şifa Eczanesi</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  body{margin:0;background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif;
-    height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
-  .baslik{font-size:54px;font-weight:bold;margin-bottom:10px;}
-  .altbaslik{font-size:28px;color:#ccc;margin-bottom:40px;}
-  .hava{position:absolute;top:30px;right:40px;font-size:30px;text-align:right;}
-  .liste{width:80%;}
-  .kart{background:#111;border-radius:16px;padding:30px;margin-bottom:20px;text-align:center;}
-  .ad{font-size:40px;font-weight:bold;}
-  .adres{font-size:24px;color:#bbb;margin-top:10px;line-height:1.4;}
-  .tel{font-size:28px;color:#9fd3ff;margin-top:10px;}
-  .saat{position:absolute;bottom:30px;font-size:24px;color:#888;}
-  .yukleniyor{font-size:24px;color:#888;}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --emerald:    #50c878;
+  --emerald-dim: rgba(80,200,120,0.18);
+  --glass-bg:  rgba(255,255,255,0.045);
+  --glass-border: rgba(255,255,255,0.09);
+  --text:      #f4f9f6;
+  --text-dim:  rgba(244,249,246,0.45);
+  --text-mid:  rgba(244,249,246,0.72);
+}
+
+html, body {
+  height: 100%;
+  background: #000;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+/* ─── AURORA ─── */
+.aurora {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  overflow: hidden;
+}
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0;
+  animation: drift 18s ease-in-out infinite;
+}
+.blob1 {
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(32,120,60,0.55), transparent 70%);
+  top: -10%; left: -10%;
+  animation-delay: 0s; animation-duration: 20s;
+}
+.blob2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(ellipse, rgba(20,90,50,0.4), transparent 70%);
+  bottom: -15%; right: -8%;
+  animation-delay: -7s; animation-duration: 24s;
+}
+.blob3 {
+  width: 700px; height: 350px;
+  background: radial-gradient(ellipse, rgba(40,130,80,0.3), transparent 70%);
+  top: 40%; left: 20%;
+  animation-delay: -13s; animation-duration: 28s;
+}
+@keyframes drift {
+  0%   { opacity: 0;    transform: translate(0px,   0px)   scale(1);    }
+  15%  { opacity: 1; }
+  50%  { opacity: 0.8;  transform: translate(60px, -40px)  scale(1.1);  }
+  85%  { opacity: 1; }
+  100% { opacity: 0;    transform: translate(0px,   0px)   scale(1);    }
+}
+
+/* ─── LAYOUT ─── */
+.screen {
+  position: relative; z-index: 1;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 0 56px;
+}
+
+/* ─── TOP BAR ─── */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 0 32px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.topbar-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.nobetci-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--emerald);
+  opacity: 0.9;
+}
+.nobetci-tarih {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: 0.3px;
+}
+
+/* Hava widget */
+.hava-widget {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 14px 26px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.07);
+}
+.hava-ikon { font-size: 32px; line-height: 1; }
+.hava-sicaklik {
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+
+/* ─── KART ALANI ─── */
+.liste-alani {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  padding: 36px 0;
+  overflow: hidden;
+}
+
+.kart {
+  background: var(--glass-bg);
+  backdrop-filter: blur(28px);
+  border: 1px solid var(--glass-border);
+  border-radius: 32px;
+  padding: 34px 48px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 24px 64px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.09),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateY(28px);
+  animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+
+/* Cam yansıması – üstten inen parlak şerit */
+.kart::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+}
+
+/* Sol kenar zümrüt vurgu çizgisi */
+.kart::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--emerald), transparent);
+  opacity: 0.7;
+  border-radius: 0 2px 2px 0;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.kart:nth-child(1) { animation-delay: 0.1s; }
+.kart:nth-child(2) { animation-delay: 0.22s; }
+.kart:nth-child(3) { animation-delay: 0.34s; }
+.kart:nth-child(4) { animation-delay: 0.46s; }
+
+.kart-icerik {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.kart-sol { flex: 1; }
+
+.kart-ad {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.2px;
+  line-height: 1.2;
+}
+
+.kart-adres {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text-mid);
+  margin-top: 10px;
+  line-height: 1.6;
+  max-width: 620px;
+}
+
+.kart-tel {
+  flex-shrink: 0;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--emerald);
+  letter-spacing: 1.5px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ─── ALT BAR ─── */
+.altbar {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 20px 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.altbar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Havan ikonu */
+.havan-svg { opacity: 0.7; }
+
+.altbar-isim {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+
+.altbar-ayrac {
+  width: 1px;
+  height: 22px;
+  background: rgba(255,255,255,0.12);
+  margin: 0 4px;
+}
+
+.saat-widget {
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text-mid);
+  letter-spacing: 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Yükleniyor */
+.yukleniyor {
+  color: var(--text-dim);
+  font-size: 18px;
+  font-weight: 300;
+  text-align: center;
+  letter-spacing: 2px;
+  padding: 40px;
+}
+
 </style>
 </head>
 <body>
 
-<div class="hava" id="hava">⏳</div>
-<div class="baslik">Şifa Eczanesi</div>
-<div class="altbaslik" id="tarih">Bugün Nöbetçi Eczaneler</div>
-<div class="liste" id="liste"><div class="yukleniyor">Yükleniyor...</div></div>
-<div class="saat" id="saat"></div>
+<!-- Aurora arka planı -->
+<div class="aurora">
+  <div class="aurora-blob blob1"></div>
+  <div class="aurora-blob blob2"></div>
+  <div class="aurora-blob blob3"></div>
+</div>
+
+<div class="screen">
+
+  <!-- Üst bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="nobetci-label">Nöbetçi Eczaneler</span>
+      <span class="nobetci-tarih" id="tarih">—</span>
+    </div>
+    <div class="hava-widget" id="hava">
+      <span class="hava-ikon">⏳</span>
+      <span class="hava-sicaklik">—°C</span>
+    </div>
+  </div>
+
+  <!-- Kartlar -->
+  <div class="liste-alani" id="liste">
+    <div class="yukleniyor">Y Ü K L E N İ Y O R</div>
+  </div>
+
+  <!-- Alt bar -->
+  <div class="altbar">
+    <div class="altbar-left">
+      <!-- Havan SVG -->
+      <svg class="havan-svg" width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect x="58" y="14" width="7" height="36" rx="3.5" fill="#50c878"/>
+        <ellipse cx="61.5" cy="13" rx="6" ry="4.5" fill="#7fe0a0"/>
+        <path d="M14 66 Q17 50 50 50 Q83 50 86 66 L81 83 Q76 91 50 91 Q24 91 19 83 Z"
+              fill="none" stroke="#50c878" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M22 68 Q24 58 50 58 Q76 58 78 68 L74 80 Q70 87 50 87 Q30 87 26 80 Z"
+              fill="rgba(80,200,120,0.06)"/>
+        <path d="M14 66 Q17 50 50 50 Q83 50 86 66" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="altbar-isim">Şifa Eczanesi</span>
+    </div>
+    <div class="altbar-left">
+      <div class="altbar-ayrac"></div>
+      <span class="saat-widget" id="saat">--:--:--</span>
+    </div>
+  </div>
+
+</div>
 
 <script>
-// ↓↓↓ Apps Script'i yeniden dağıttıktan sonra aldığın URL'i buraya yapıştır ↓↓↓
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6MJMdOqGI5bdVOL-EciKhNV5y80e_hS5vghyQGm-yWS7bKcS0DU1N510SydYRLRWk/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6MJMdOqGI5bdVOL-EciKhNV5y80e_hS5vghyQGm-yWS7bKcS0DU1N510SydYRLRWk/exec
 
+";
+
+// Saat
 function saatGuncelle() {
   document.getElementById("saat").innerText = new Date().toLocaleTimeString("tr-TR");
 }
 setInterval(saatGuncelle, 1000);
 saatGuncelle();
 
+// Tarih
 function tarihYaz() {
-  const simdi = new Date();
-  const str = simdi.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
-  document.getElementById("tarih").innerText = "Bugün Nöbetçi Eczaneler — " + str;
+  const s = new Date();
+  const g = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"][s.getDay()];
+  const t = s.toLocaleDateString("tr-TR", { day:"numeric", month:"long", year:"numeric" });
+  document.getElementById("tarih").innerText = g + ", " + t;
 }
 tarihYaz();
 
+// Veri
 async function veriYukle() {
   try {
     const res = await fetch(APPS_SCRIPT_URL);
     const data = await res.json();
 
-    // Hava durumu
-    const hava = data.hava || {};
-    document.getElementById("hava").innerText = (hava.ikon || "☀️") + " " + (hava.sicaklik ?? "--") + "°C";
+    // Hava
+    const h = data.hava || {};
+    document.getElementById("hava").innerHTML =
+      `<span class="hava-ikon">${h.ikon || "☀️"}</span><span class="hava-sicaklik">${h.sicaklik ?? "—"}°C</span>`;
 
-    // Eczane listesi
+    // Kartlar
     const liste = document.getElementById("liste");
     const eczaneler = data.eczaneler || [];
-    if (eczaneler.length === 0) {
-      liste.innerHTML = '<div class="kart">Bugün için nöbetçi eczane bilgisi bulunamadı.</div>';
+    if (!eczaneler.length) {
+      liste.innerHTML = '<div class="yukleniyor">Bugün için nöbetçi eczane bilgisi bulunamadı.</div>';
       return;
     }
     liste.innerHTML = eczaneler.map(e => `
       <div class="kart">
-        <div class="ad">${e.ad}</div>
-        ${e.adres ? `<div class="adres">${e.adres}</div>` : ""}
-        ${e.tel ? `<div class="tel">${e.tel}</div>` : ""}
+        <div class="kart-icerik">
+          <div class="kart-sol">
+            <div class="kart-ad">${e.ad}</div>
+            ${e.adres ? `<div class="kart-adres">${e.adres}</div>` : ""}
+          </div>
+          ${e.tel ? `<div class="kart-tel">${e.tel}</div>` : ""}
+        </div>
       </div>
     `).join("");
-  } catch (err) {
-    document.getElementById("liste").innerHTML = '<div class="kart">Veri alınamadı, tekrar denenecek...</div>';
+  } catch {
+    document.getElementById("liste").innerHTML = '<div class="yukleniyor">Veri alınamadı, tekrar denenecek...</div>';
   }
 }
 
 veriYukle();
-setInterval(veriYukle, 10 * 60 * 1000); // 10 dakikada bir tazele
+setInterval(veriYukle, 10 * 60 * 1000);
 </script>
-
 </body>
 </html>
