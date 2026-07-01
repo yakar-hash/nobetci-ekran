@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+<title>Şifa Eczanesi – Günün Tavsiyesi</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,400;1,500&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; }
+
+/* ── ARKA PLAN: açık, sıcak, hareketli ── */
+body {
+  background: #EEF0EC;
+  position: relative;
+}
+
+/* Büyük renkli blob'lar — canlı ama hafif */
+.bg-blobs {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: drift 18s ease-in-out infinite;
+}
+.b1 {
+  width: 640px; height: 520px;
+  background: radial-gradient(ellipse, rgba(120,190,140,0.45), transparent 70%);
+  top: -15%; left: -10%;
+  animation-duration: 20s; animation-delay: 0s;
+}
+.b2 {
+  width: 580px; height: 480px;
+  background: radial-gradient(ellipse, rgba(90,150,220,0.30), transparent 70%);
+  top: -5%; right: -8%;
+  animation-duration: 24s; animation-delay: -8s;
+}
+.b3 {
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, rgba(220,160,90,0.28), transparent 70%);
+  bottom: -10%; left: 20%;
+  animation-duration: 28s; animation-delay: -14s;
+}
+.b4 {
+  width: 400px; height: 400px;
+  background: radial-gradient(ellipse, rgba(180,100,160,0.20), transparent 70%);
+  bottom: 5%; right: -5%;
+  animation-duration: 22s; animation-delay: -6s;
+}
+@keyframes drift {
+  0%   { transform: translate(0px, 0px)   scale(1);    }
+  33%  { transform: translate(40px,-30px) scale(1.08); }
+  66%  { transform: translate(-20px,25px) scale(0.95); }
+  100% { transform: translate(0px, 0px)   scale(1);    }
+}
+
+/* ── LAYOUT ── */
+.screen {
+  position: relative; z-index: 1;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 0 64px;
+}
+
+/* ── ÜST BAR ── */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 36px 0 28px;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+}
+
+.topbar-sol { display: flex; align-items: center; gap: 16px; }
+
+.havan-svg { opacity: 0.65; flex-shrink: 0; }
+
+.marka-grup { display: flex; flex-direction: column; gap: 2px; }
+.marka-isim {
+  font-family: 'Lora', serif;
+  font-size: 22px; font-weight: 600;
+  color: #1C2B20;
+}
+.marka-slogan {
+  font-size: 11px; font-weight: 400;
+  letter-spacing: 3px;
+  color: #5A8A6A;
+  text-transform: uppercase;
+  max-width: 460px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Hava — cam widget */
+.hava-widget {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 18px;
+  padding: 12px 22px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.9);
+}
+.hava-ikon   { font-size: 26px; line-height: 1; }
+.hava-derece { font-size: 26px; font-weight: 300; color: #1C2B20; letter-spacing: -0.5px; }
+
+/* ── İÇERİK ── */
+.icerik-alani {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+/* Ana cam kart */
+.ana-kart {
+  width: 100%;
+  background: rgba(255,255,255,0.48);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255,255,255,0.75);
+  border-radius: 36px;
+  padding: 56px 68px;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.08),
+    0 4px 16px rgba(0,0,0,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.95);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: riseIn 0.8s cubic-bezier(0.22,1,0.36,1) 0.15s forwards;
+}
+
+/* Köşe renk vurgusu */
+.ana-kart::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle at top right, rgba(120,190,140,0.18), transparent 65%);
+  border-radius: 0 36px 0 0;
+  pointer-events: none;
+}
+.ana-kart::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle at bottom left, rgba(90,150,220,0.12), transparent 65%);
+  border-radius: 0 0 0 36px;
+  pointer-events: none;
+}
+
+@keyframes riseIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.kart-ust {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 36px;
+}
+
+.etiket-grup { display: flex; flex-direction: column; gap: 6px; }
+.etiket {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: #5A8A6A;
+}
+
+.buyuk-ikon {
+  font-size: 64px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.10));
+  animation: iconIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.4s both;
+}
+@keyframes iconIn {
+  from { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg);     opacity: 1; }
+}
+
+/* Başlık */
+.tavsiye-baslik {
+  font-family: 'Lora', serif;
+  font-size: clamp(40px, 5.5vw, 64px);
+  font-weight: 600;
+  color: #131F16;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  margin-bottom: 24px;
+}
+
+/* Ayırıcı */
+.ayirici {
+  width: 52px; height: 2.5px;
+  background: linear-gradient(90deg, #6DB88A, #5A96D4);
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+
+/* Metin */
+.tavsiye-metin {
+  font-family: 'Lora', serif;
+  font-size: clamp(20px, 2.2vw, 28px);
+  font-style: italic;
+  font-weight: 400;
+  color: rgba(19,31,22,0.70);
+  line-height: 1.7;
+}
+
+/* Slogan chip */
+.slogan-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 32px;
+  background: rgba(109,184,138,0.14);
+  border: 1px solid rgba(109,184,138,0.30);
+  border-radius: 50px;
+  padding: 10px 22px;
+}
+.slogan-kalp { color: #6DB88A; font-size: 14px; }
+.slogan-yazi {
+  font-size: 14px; font-weight: 400;
+  letter-spacing: 0.5px;
+  color: rgba(19,31,22,0.65);
+}
+
+/* Yükleniyor */
+.yukleniyor {
+  font-size: 13px; font-weight: 300; letter-spacing: 5px;
+  color: rgba(19,31,22,0.35); text-transform: uppercase;
+}
+
+/* ── ALT BAR ── */
+.altbar {
+  border-top: 1px solid rgba(0,0,0,0.07);
+  padding: 16px 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.altbar-tarih {
+  font-size: 13px; font-weight: 300;
+  letter-spacing: 2px;
+  color: rgba(19,31,22,0.40);
+}
+.saat-widget {
+  font-size: 20px; font-weight: 200;
+  letter-spacing: 4px;
+  color: rgba(19,31,22,0.50);
+  font-variant-numeric: tabular-nums;
+}
+</style>
+</head>
+<body>
+
+<div class="bg-blobs">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="blob b4"></div>
+</div>
+
+<div class="screen">
+
+  <div class="topbar">
+    <div class="topbar-sol">
+      <svg class="havan-svg" width="34" height="34" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect x="58" y="14" width="7" height="34" rx="3.5" fill="#5A8A6A"/>
+        <ellipse cx="61.5" cy="13" rx="6" ry="4" fill="#7AAA8A"/>
+        <path d="M14 66 Q17 50 50 50 Q83 50 86 66 L81 83 Q76 91 50 91 Q24 91 19 83 Z"
+              fill="none" stroke="#5A8A6A" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M14 66 Q17 50 50 50 Q83 50 86 66"
+              fill="none" stroke="rgba(90,138,106,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div class="marka-grup">
+        <span class="marka-isim">Şifa Eczanesi</span>
+        <span class="marka-slogan" id="sabit-slogan">Sağlığınız için güvenilir bilgi, güler yüzlü hizmet.</span>
+      </div>
+    </div>
+    <div class="hava-widget" id="hava">
+      <span class="hava-ikon">⏳</span>
+      <span class="hava-derece">—°C</span>
+    </div>
+  </div>
+
+  <div class="icerik-alani">
+    <div class="ana-kart" id="ana-kart">
+      <div class="yukleniyor">yükleniyor</div>
+    </div>
+  </div>
+
+  <div class="altbar">
+    <span class="altbar-tarih" id="tarih">—</span>
+    <span class="saat-widget" id="saat">--:--:--</span>
+  </div>
+
+</div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzHreCt21AzQyf20jeB5J2XrhK-cEUjUf-_7K2NqyFO3aEQeUj6Z2ZLwdl2i2NNwJI/exec";
+
+function saatGuncelle() {
+  document.getElementById("saat").innerText = new Date().toLocaleTimeString("tr-TR");
+}
+setInterval(saatGuncelle, 1000);
+saatGuncelle();
+
+function tarihYaz() {
+  const s = new Date();
+  const g = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"][s.getDay()];
+  const t = s.toLocaleDateString("tr-TR", { day:"numeric", month:"long", year:"numeric" });
+  document.getElementById("tarih").innerText = g + ", " + t;
+}
+tarihYaz();
+
+async function veriYukle() {
+  try {
+    const res  = await fetch(APPS_SCRIPT_URL + "?t=" + Date.now());
+    const data = await res.json();
+
+    const h = data.hava || {};
+    document.getElementById("hava").innerHTML =
+      `<span class="hava-ikon">${h.ikon||"☀️"}</span><span class="hava-derece">${h.sicaklik??"—"}°C</span>`;
+
+    const t = data.tavsiye;
+    const kart = document.getElementById("ana-kart");
+
+    if (!t) {
+      kart.innerHTML = '<div class="yukleniyor">Bugün için tavsiye bulunamadı.</div>';
+      return;
+    }
+
+    if (t.sabitSlogan) document.getElementById("sabit-slogan").innerText = t.sabitSlogan;
+
+    kart.style.animation = "none";
+    kart.offsetHeight;
+    kart.style.animation = "riseIn 0.8s cubic-bezier(0.22,1,0.36,1) forwards";
+
+    kart.innerHTML = `
+      <div class="kart-ust">
+        <div class="etiket-grup">
+          <span class="etiket">Eczacınızdan Günün Tavsiyesi</span>
+        </div>
+        ${t.ikon ? `<div class="buyuk-ikon">${t.ikon}</div>` : ""}
+      </div>
+      <div class="tavsiye-baslik">${t.baslik||""}</div>
+      <div class="ayirici"></div>
+      <div class="tavsiye-metin">${t.icerik||""}</div>
+      ${t.slogan ? `
+        <div class="slogan-chip">
+          <span class="slogan-kalp">♥</span>
+          <span class="slogan-yazi">${t.slogan}</span>
+        </div>` : ""}
+    `;
+  } catch(e) {
+    document.getElementById("ana-kart").innerHTML = '<div class="yukleniyor">Veri alınamadı, tekrar denenecek...</div>';
+  }
+}
+
+veriYukle();
+setInterval(veriYukle, 10 * 60 * 1000);
+</script>
+</body>
+</html>
