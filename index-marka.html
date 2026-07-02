@@ -173,7 +173,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 
   <div class="alt">
     <div class="qr-wrap">
-      <canvas id="qr-canvas"></canvas>
+      <img 
+        src="https://drive.google.com/uc?export=view&id=1pLfhonweLluIFqacQeRnCVx-LNpNdJSF"
+        style="display:block; width:clamp(110px,20vw,160px); height:clamp(110px,20vw,160px); border-radius:8px; object-fit:cover;"
+        alt="WhatsApp QR"
+      />
     </div>
     <div class="qr-aciklama">
       <span>💬</span>
@@ -308,22 +312,8 @@ document.getElementById("saat").innerText = new Date().toLocaleTimeString("tr-TR
   document.getElementById("tarih").innerText = g + "  ·  " + t;
 })();
 
-// ── QR Kod ──
-(function() {
-  const script = document.createElement("script");
-  script.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
-  script.onload = function() {
-    const canvas = document.getElementById("qr-canvas");
-    const size = canvas.offsetWidth || 140;
-    new QRCode(canvas, {
-      text: "https://wa.me/message/NOYXDMH2X2G4F1",
-      width: size, height: size,
-      colorDark: "#000000", colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
-    });
-  };
-  document.head.appendChild(script);
-})();
+
+
 </script>
 </body>
 </html>
