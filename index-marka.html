@@ -176,19 +176,91 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 </div>
 
 <script>
-const MARKA_URL = "https://script.google.com/macros/s/AKfycbzpw-Cs1UwiExnhi6QmfEhKssXz6OnmVrFCPDHh18Wb8gE1SHo0TmPB6B7ERh3vYqPy/exec";
+const BASE = "https://yakar-hash.github.io/nobetci-ekran/";
+const FOTOLAR = [
+  "premium_photo-1668487826830-2eb44ef9d764.avif",
+  "premium_photo-1668487826871-2f2cac23ad56.avif",
+  "premium_photo-1668790459246-e1e0557f7a5a.avif",
+  "premium_photo-1670381251596-4a6eccc9ff24.avif",
+  "premium_photo-1670381252159-82bd736619ce.avif",
+  "premium_photo-1670885807239-8c79ee13fafe.avif",
+  "premium_photo-1670981099297-319458480c3c.avif",
+  "premium_photo-1670981099391-993952083169.avif",
+  "premium_photo-1670981099554-618ea1e93bf0.avif",
+  "premium_photo-1671721439617-491242a0507f.avif",
+  "premium_photo-1673266630624-4cbef6d25ff4.avif",
+  "premium_photo-1687814802129-1896ae12cb36.avif",
+  "premium_photo-1723921254681-1cd80686b44e.avif",
+  "premium_photo-1731172754771-62f22dbe0f84.avif",
+  "premium_photo-1779309359056-b0de67d652e6.avif",
+  "premium_photo-1780585552341-4ca177ec166a.avif",
+  "premium_photo-1781667547581-6df50a8e3107.avif",
+  "premium_photo-1781835197258-127e0175de5b.avif",
+  "premium_photo-1782046168465-54f1fe00528b.avif",
+  "photo-1781088677117-0295ba846def.avif",
+  "photo-1781376448844-82a354712840.avif",
+  "photo-1781379947386-c19f88431d5f.avif",
+  "photo-1781429235828-55c8c31baf38.avif",
+  "photo-1781436331651-c754cc6463e2.avif",
+  "photo-1781633237528-d19707220264.avif",
+  "photo-1781728323345-da2866c32b6b.avif",
+  "photo-1781819063041-8627b59def6d.avif",
+  "photo-1782149461714-0b033e08c15f.avif",
+  "photo-1782178393518-4a9caa66aaf7.avif",
+  "photo-1782178393978-5b64b784bbac.avif",
+  "photo-1782178394089-60e22639f026.avif",
+  "photo-1782222428337-58ef614b4175.avif",
+  "photo-1782252152159-b3c66c176da8.avif",
+  "photo-1782379301017-c914569b3a0a.avif",
+  "photo-1782496511163-2eaf103e55d9.avif",
+  "photo-1782661898198-ad3faacb46f7.avif",
+  "photo-1782731068264-2e484f4a2463.avif",
+  "photo-1782813632814-3c25f1f51eca.avif",
+  "photo-1732721646759-82dded8e90dc.avif",
+  "photo-1761534361765-b388a48d7bd6.avif",
+  "photo-1764416529747-d2868554637b.avif",
+  "photo-1777421025415-d5203e684dbf.avif",
+  "photo-1777734582660-e0635eea3bd1.avif",
+  "photo-1777873167728-b0d09526d3c8.avif",
+  "photo-1777911045218-cd664d5ea632.avif",
+  "photo-1777993325982-d0e9e0f61cfb.avif",
+  "photo-1778064583576-31f85c1abc09.avif",
+  "photo-1778245337019-fc774a7e31d8.avif",
+  "photo-1778409617629-c8c3e9c38c8b.avif",
+  "photo-1780039319910-3aaf210c9f05.avif",
+  "photo-1780049846210-966fafaa371f.avif",
+  "photo-1780050303562-81dde6aaf1df.avif",
+  "photo-1780163930838-1502715c3bc1.avif",
+  "photo-1780362508068-feb6f59e8044.avif",
+  "photo-1780668495634-28c1151bbec2.avif",
+  "photo-1780822428859-1ed997bff9ff.avif",
+  "photo-1780830456558-747bae56ea37.avif",
+  "photo-1512069772995-ec65ed45afd6.avif",
+  "photo-1512069938357-89703bda53ba.avif",
+  "photo-1521089815383-cf2b2cf7f0f0.avif",
+  "photo-1525183995014-bd94c0750cd5.avif",
+  "photo-1555633514-abcee6ab92e1.avif",
+  "photo-1562243061-204550d8a2c9.avif",
+  "photo-1576066582425-b429feadf10f.avif",
+  "photo-1581159186721-b68b78da4ec9.avif",
+  "photo-1583088580009-2d947c3e90a6.avif",
+  "photo-1586423507094-77e720311e64.avif",
+  "photo-1587854680352-936b22b91030.avif",
+  "photo-1587854692152-cbe660dbde88.avif",
+  "photo-1603706580932-6befcf7d8521.avif",
+  "photo-1615895963378-661e55f802d1.avif",
+  "photo-1628771065518-0d82f1938462.avif",
+  "photo-1659019730228-ed72842149af.avif",
+  "photo-1660583494731-57fa5d954377.avif",
+  "photo-1698758004450-1f9da080f9b4.avif",
+  "photo-1708783739749-a7ca20b57ac6.avif",
+  "photo-1495867372677-370ea51bf569.avif",
+  "photo-1499638472904-ea5c6178a300.avif",
+];
 
-async function fotoCek() {
-  try {
-    const res  = await fetch(MARKA_URL + "?t=" + Date.now());
-    const data = await res.json();
-    if (data.url) {
-      document.getElementById("bg").style.backgroundImage = `url('${data.url}')`;
-    }
-  } catch(e) {}
-}
-fotoCek();
-setInterval(fotoCek, 15 * 60 * 1000);
+// Her açılışta rastgele fotoğraf
+const foto = BASE + FOTOLAR[Math.floor(Math.random() * FOTOLAR.length)];
+document.getElementById("bg").style.backgroundImage = `url('${foto}')`;
 
 // Saat
 setInterval(() => {
