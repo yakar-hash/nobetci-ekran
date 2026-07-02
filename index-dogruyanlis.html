@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+<title>Şifa Eczanesi – Doğru mu Yanlış mı?</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; }
+
+body { background: #0A0A0F; }
+
+/* ── ARKA PLAN: çarpıcı kırmızı-yeşil gradient ── */
+.bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+/* Büyük kırmızı sol blob */
+.bg::before {
+  content: '';
+  position: absolute;
+  width: 90vw; height: 60vh;
+  background: radial-gradient(ellipse, rgba(220,30,60,0.45) 0%, transparent 65%);
+  top: -10%; left: -20%;
+  filter: blur(70px);
+  animation: drift1 18s ease-in-out infinite;
+}
+/* Büyük yeşil sağ blob */
+.bg::after {
+  content: '';
+  position: absolute;
+  width: 85vw; height: 65vh;
+  background: radial-gradient(ellipse, rgba(20,180,80,0.40) 0%, transparent 65%);
+  bottom: -10%; right: -15%;
+  filter: blur(70px);
+  animation: drift2 22s ease-in-out infinite;
+}
+@keyframes drift1 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50%      { transform: translate(4vw,3vh) scale(1.08); }
+}
+@keyframes drift2 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50%      { transform: translate(-3vw,-4vh) scale(1.06); }
+}
+
+/* Orta koyu katman — okunabilirlik */
+.bg-mid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(10,10,15,0.55) 0%, rgba(10,10,15,0.30) 100%);
+}
+
+/* ── LAYOUT ── */
+.screen {
+  position: relative; z-index: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 5vh 7vw;
+}
+
+/* ── ÜST BAR ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 2.5vh;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+
+.marka-sol { display: flex; align-items: center; gap: 14px; }
+.havan-svg { opacity: 0.6; }
+
+.marka-grup { display: flex; flex-direction: column; gap: 3px; }
+.marka-isim {
+  font-family: 'Lora', serif;
+  font-size: clamp(20px, 3.2vw, 30px);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+.marka-etiket {
+  font-size: clamp(9px, 1.4vw, 13px);
+  font-weight: 400; letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+}
+
+.saat {
+  font-size: clamp(16px,2.5vw,24px);
+  font-weight: 200; letter-spacing: 3px;
+  color: rgba(255,255,255,0.35);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── ORTA ETİKET ── */
+.ana-etiket {
+  text-align: center;
+  padding: 3vh 0 2vh;
+  flex-shrink: 0;
+}
+.ana-etiket-yazi {
+  font-size: clamp(11px, 1.8vw, 16px);
+  font-weight: 700; letter-spacing: 7px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+
+/* ── YANLIŞ KARTI ── */
+.yanlis-kart {
+  width: 100%;
+  flex-shrink: 0;
+  background: rgba(220,30,60,0.12);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(220,30,60,0.35);
+  border-radius: 28px;
+  padding: clamp(22px,3.8vh,42px) clamp(24px,5vw,52px);
+  position: relative; overflow: hidden;
+  box-shadow: 0 0 60px rgba(220,30,60,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
+  opacity: 0; transform: translateY(-18px);
+  animation: dropIn 0.7s cubic-bezier(0.22,1,0.36,1) 0.15s forwards;
+}
+.yanlis-kart::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(220,30,60,0.6), transparent);
+}
+.yanlis-kart::after {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: linear-gradient(to bottom, rgba(220,30,60,0.8), transparent);
+  border-radius: 28px 0 0 28px;
+}
+
+/* ── DOĞRU KARTI ── */
+.dogru-kart {
+  width: 100%;
+  flex: 1;
+  background: rgba(20,180,80,0.10);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(20,180,80,0.30);
+  border-radius: 28px;
+  padding: clamp(22px,3.8vh,42px) clamp(24px,5vw,52px);
+  position: relative; overflow: hidden;
+  box-shadow: 0 0 60px rgba(20,180,80,0.12), inset 0 1px 0 rgba(255,255,255,0.06);
+  display: flex; flex-direction: column; justify-content: center;
+  opacity: 0; transform: translateY(18px);
+  animation: riseIn 0.7s cubic-bezier(0.22,1,0.36,1) 0.30s forwards;
+}
+.dogru-kart::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(20,180,80,0.5), transparent);
+}
+.dogru-kart::after {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: linear-gradient(to bottom, rgba(20,180,80,0.8), transparent);
+  border-radius: 28px 0 0 28px;
+}
+
+@keyframes dropIn { to { opacity: 1; transform: translateY(0); } }
+@keyframes riseIn { to { opacity: 1; transform: translateY(0); } }
+
+/* Kart başlık badge */
+.badge {
+  display: inline-flex; align-items: center; gap: 10px;
+  border-radius: 50px;
+  padding: clamp(6px,1vh,11px) clamp(16px,2.5vw,26px);
+  margin-bottom: clamp(14px,2.2vh,26px);
+  font-size: clamp(12px,1.8vw,17px);
+  font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+}
+.badge-yanlis {
+  background: rgba(220,30,60,0.20);
+  border: 1px solid rgba(220,30,60,0.40);
+  color: #FF6B80;
+}
+.badge-dogru {
+  background: rgba(20,180,80,0.18);
+  border: 1px solid rgba(20,180,80,0.35);
+  color: #4ADE80;
+}
+
+.kart-metin {
+  font-family: 'Lora', serif;
+  font-size: clamp(22px, 4vw, 44px);
+  font-weight: 700;
+  line-height: 1.2;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: -0.3px;
+}
+.dogru-kart .kart-metin {
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(255,255,255,0.88);
+}
+
+/* Ok geçiş */
+.ok-wrap {
+  display: flex; align-items: center; gap: 2vw;
+  padding: 1.8vh 0; flex-shrink: 0;
+  opacity: 0;
+  animation: fadeIn 0.5s ease 0.6s forwards;
+}
+.ok-cizgi-sol { flex:1; height:1px; background: linear-gradient(90deg, transparent, rgba(220,30,60,0.4)); }
+.ok-cizgi-sag { flex:1; height:1px; background: linear-gradient(90deg, rgba(20,180,80,0.4), transparent); }
+.ok-ikon { font-size: clamp(20px,3.5vw,30px); color: rgba(255,255,255,0.5); }
+@keyframes fadeIn { to { opacity:1; } }
+
+/* ── ALT BAR ── */
+.altbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 2.2vh;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+  opacity: 0;
+  animation: fadeIn 0.5s ease 0.8s forwards;
+}
+.eczaci-isim {
+  font-family: 'Lora', serif;
+  font-size: clamp(14px, 2.2vw, 20px);
+  font-style: italic;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.5px;
+}
+.slogan-yazi {
+  font-size: clamp(11px, 1.6vw, 15px);
+  font-weight: 300; letter-spacing: 1px;
+  color: rgba(255,255,255,0.25);
+  text-align: right;
+}
+
+.yukleniyor {
+  flex:1; display:flex; align-items:center; justify-content:center;
+  font-size:14px; letter-spacing:5px; color:rgba(255,255,255,0.25); text-transform:uppercase;
+}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="bg-mid"></div>
+
+<div class="screen">
+
+  <div class="topbar">
+    <div class="marka-sol">
+      <svg class="havan-svg" width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect x="58" y="14" width="7" height="34" rx="3.5" fill="rgba(255,255,255,0.6)"/>
+        <ellipse cx="61.5" cy="13" rx="6" ry="4" fill="rgba(255,255,255,0.4)"/>
+        <path d="M14 66 Q17 50 50 50 Q83 50 86 66 L81 83 Q76 91 50 91 Q24 91 19 83 Z"
+              fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M14 66 Q17 50 50 50 Q83 50 86 66"
+              fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div class="marka-grup">
+        <span class="marka-isim">Şifa Eczanesi</span>
+        <span class="marka-etiket">Eczacınızdan Sağlık Bilgisi</span>
+      </div>
+    </div>
+    <div class="saat" id="saat">--:--:--</div>
+  </div>
+
+  <div class="ana-etiket">
+    <span class="ana-etiket-yazi">Doğru mu · Yanlış mı?</span>
+  </div>
+
+  <div id="icerik" style="flex:1;display:flex;flex-direction:column;">
+    <div class="yukleniyor">yükleniyor</div>
+  </div>
+
+</div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_O5aqmvZTp-188YhLSfFZEVV9CQ6lUQoPaaPaf4Kw8ylhvfakQlWcptd_ixSNg4Vh/exec";
+
+function saatGuncelle() {
+  document.getElementById("saat").innerText = new Date().toLocaleTimeString("tr-TR");
+}
+setInterval(saatGuncelle, 1000);
+saatGuncelle();
+
+async function veriYukle() {
+  try {
+    const res  = await fetch(APPS_SCRIPT_URL + "?t=" + Date.now());
+    const data = await res.json();
+    const v    = data.veri;
+    const icerik = document.getElementById("icerik");
+
+    if (!v) {
+      icerik.innerHTML = '<div class="yukleniyor">Bugün için içerik bulunamadı.</div>';
+      return;
+    }
+
+    icerik.innerHTML = `
+      <div class="yanlis-kart">
+        <div class="badge badge-yanlis">❌ &nbsp;Yanlış İnanış</div>
+        <div class="kart-metin">${v.yanlis||""}</div>
+      </div>
+
+      <div class="ok-wrap">
+        <div class="ok-cizgi-sol"></div>
+        <div class="ok-ikon">↓</div>
+        <div class="ok-cizgi-sag"></div>
+      </div>
+
+      <div class="dogru-kart">
+        <div class="badge badge-dogru">✅ &nbsp;Doğrusu Şu</div>
+        <div class="kart-metin">${v.dogru||""}</div>
+      </div>
+
+      <div class="altbar">
+        <span class="eczaci-isim">Ecz. Ercüment Yakar</span>
+        <span class="slogan-yazi">${v.slogan||"Sağlığınız için güvenilir bilgi, güler yüzlü hizmet."}</span>
+      </div>
+    `;
+
+  } catch(e) {
+    document.getElementById("icerik").innerHTML = '<div class="yukleniyor">Veri alınamadı, tekrar denenecek...</div>';
+  }
+}
+
+veriYukle();
+setInterval(veriYukle, 10 * 60 * 1000);
+</script>
+</body>
+</html>
