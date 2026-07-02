@@ -5,25 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
 <title>Şifa Eczanesi</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Serif+Display:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { width: 100%; height: 100%; overflow: hidden; }
 
-/* ── FOTOĞRAF ── */
+:root { --foto: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1080&q=88&fit=crop'); }
+
 .bg-foto {
   position: fixed; inset: 0; z-index: 0;
   background-image: var(--foto);
-  background-size: cover;
-  background-position: center;
+  background-size: cover; background-position: center;
   animation: kenBurns 34s ease-in-out infinite alternate;
 }
 @keyframes kenBurns {
-  0%   { transform: scale(1.00) translate( 0%,    0%  ); }
-  100% { transform: scale(1.10) translate(-2%,   -1.5%); }
+  0%   { transform: scale(1.00) translate( 0%,  0%  ); }
+  100% { transform: scale(1.10) translate(-2%, -1.5%); }
 }
 
-/* ── OVERLAY ── */
 .overlay {
   position: fixed; inset: 0; z-index: 1;
   background: linear-gradient(
@@ -36,14 +35,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   );
 }
 
-/* ── LAYOUT ── */
 .screen {
   position: relative; z-index: 2;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: space-between;
   padding: 6.5vh 9vw 6vh;
   color: #fff;
 }
@@ -65,8 +61,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   font-family: 'Inter', sans-serif;
   font-size: clamp(11px, 1.7vw, 15px);
   font-weight: 300; letter-spacing: 6px;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.38);
+  text-transform: uppercase; color: rgba(255,255,255,0.38);
 }
 
 /* ── ORTA ── */
@@ -75,34 +70,26 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   opacity: 0; animation: fadeUp 1.4s cubic-bezier(0.16,1,0.3,1) 0.5s forwards;
   text-align: center;
 }
-
 .havan-icon { opacity: 0.50; filter: drop-shadow(0 4px 14px rgba(0,0,0,0.5)); }
-
-.ust-cizgi {
-  width: 1px; height: 36px;
-  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.30));
-}
-
+.ust-cizgi { width: 1px; height: 36px; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.30)); }
 .marka-isim {
+  font-family: 'Cormorant Garamond', serif;
   font-size: clamp(50px, 11vw, 102px);
-  font-weight: 400; letter-spacing: 3px;
+  font-weight: 300; letter-spacing: 4px;
   color: #fff; line-height: 1.05;
   text-shadow: 0 4px 40px rgba(0,0,0,0.55);
 }
-
 .eczaci {
+  font-family: 'Cormorant Garamond', serif;
   font-size: clamp(17px, 2.8vw, 28px);
   font-weight: 300; font-style: italic;
-  color: rgba(255,255,255,0.48);
-  letter-spacing: 2px;
+  color: rgba(255,255,255,0.48); letter-spacing: 2px;
 }
-
 .slogan {
   font-family: 'Inter', sans-serif;
   font-size: clamp(10px, 1.6vw, 15px);
   font-weight: 300; letter-spacing: 3.5px;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.28);
+  text-transform: uppercase; color: rgba(255,255,255,0.28);
 }
 
 /* ── ALT: QR ── */
@@ -110,25 +97,19 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   display: flex; flex-direction: column; align-items: center; gap: 2vh;
   opacity: 0; animation: fadeUp 1.4s cubic-bezier(0.16,1,0.3,1) 0.8s forwards;
 }
-
 .qr-wrap {
-  background: rgba(255,255,255,0.93);
-  backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.95);
   border-radius: 18px;
   padding: clamp(10px,1.8vh,16px);
-  box-shadow:
-    0 12px 48px rgba(0,0,0,0.45),
-    0 2px 8px rgba(0,0,0,0.25),
-    inset 0 1px 0 rgba(255,255,255,0.95);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.95);
 }
-
-#qr-canvas {
+.qr-wrap img {
   display: block;
-  width: clamp(110px, 20vw, 160px);
-  height: clamp(110px, 20vw, 160px);
-  image-rendering: pixelated;
+  width: clamp(110px, 20vw, 155px);
+  height: clamp(110px, 20vw, 155px);
+  border-radius: 6px;
+  object-fit: cover;
 }
-
 .qr-aciklama {
   font-family: 'Inter', sans-serif;
   font-size: clamp(10px, 1.5vw, 14px);
@@ -137,7 +118,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   display: flex; align-items: center; gap: 8px;
 }
 
-/* ── ANİMASYON ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(22px); }
   to   { opacity: 1; transform: translateY(0);    }
@@ -166,154 +146,75 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
             fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round"/>
     </svg>
     <div class="ust-cizgi"></div>
-    <div class="marka-isim" id="marka-isim">Şifa Eczanesi</div>
-    <div class="eczaci" id="eczaci-el">Ecz. Ercüment Yakar</div>
+    <div class="marka-isim">Şifa Eczanesi</div>
+    <div class="eczaci">Ecz. Ercüment Yakar</div>
     <div class="slogan">Sağlığınız için güvenilir bilgi · güler yüzlü hizmet</div>
   </div>
 
   <div class="alt">
     <div class="qr-wrap">
-      <img 
-        src="https://drive.google.com/uc?export=view&id=1pLfhonweLluIFqacQeRnCVx-LNpNdJSF"
-        style="display:block; width:clamp(110px,20vw,160px); height:clamp(110px,20vw,160px); border-radius:8px; object-fit:cover;"
-        alt="WhatsApp QR"
-      />
+      <img src="https://yakar-hash.github.io/nobetci-ekran/qrwhatsapp.png" alt="WhatsApp QR">
     </div>
     <div class="qr-aciklama">
-      <span>💬</span>
-      <span>WhatsApp'tan bize yazın</span>
+      <span>💬</span><span>WhatsApp'tan bize yazın</span>
     </div>
   </div>
 
 </div>
 
 <script>
-// ── Rastgele fotoğraf — kategorilere göre ──
+// Rastgele fotoğraf
 const FOTOLAR = [
-  // 🌲 Orman
   "photo-1441974231531-c6227db76b6e",
   "photo-1448375240426-a2422eb3fe03",
   "photo-1476673160081-cf065607f449",
   "photo-1500534314209-a25ddb2bd429",
   "photo-1518173946687-a4c8892bbd9f",
-  // ⛰️ Dağ
   "photo-1469474968028-56623f02e42e",
   "photo-1506905925346-21bda4d32df4",
   "photo-1464822759023-fed622ff2c3b",
   "photo-1486870591958-9b9d0d1dda99",
-  "photo-1454496522488-7a8e488e8606",
-  // 🌿 Botanik
   "photo-1416879595882-3373a0480b5b",
   "photo-1462275646964-a0e3386b89ae",
   "photo-1459156212016-c812468e2115",
-  "photo-1446071422-f2c29e12592d",
-  "photo-1518791841217-8f162f1912da",
-  // 🏖️ Sahil
   "photo-1507525428034-b723cf961d3e",
   "photo-1519046904884-53103b34b206",
   "photo-1473116763249-2faaef81ccda",
-  "photo-1455729552865-3658a5d39692",
-  "photo-1507608616759-54f48f0ad8c9",
-  // 🌅 Gün Doğumu / Batımı
   "photo-1490730141103-6cac27aaab94",
   "photo-1495616811223-4d98c6e9c869",
   "photo-1470252649921-f6b1aec4a05f",
-  "photo-1501446529957-6226bd447254",
-  "photo-1506815444114-b04c1dc73c0b",
-  // 🌌 Yıldızlı Gece
   "photo-1519681393784-d120267933ba",
   "photo-1444703686981-a3abbc4d4fe3",
   "photo-1436891620584-47fd0e3e0448",
-  "photo-1471931452361-f432ef2ae5e6",
-  "photo-1502481851512-e9e2529bfbf9",
-  // ❄️ Kış / Winter
   "photo-1511300636408-a63a89df3482",
   "photo-1491555103944-7c647fd857e6",
-  "photo-1483921616487-2b05a5e40578",
   "photo-1457269449834-928af64c684d",
-  "photo-1516912481800-0137a6eb17e8",
-  // 🏞️ Göl
   "photo-1501854140801-50d01698950b",
   "photo-1476514525405-e9c6f4be2b91",
-  "photo-1439792675105-701e6a4ab6f0",
-  "photo-1464146072230-91cabc968ddb",
   "photo-1507003211169-0a1dd7228f2d",
-  // ☀️ Yaz / Summer
   "photo-1469854523086-cc02fe5d8800",
-  "photo-1473496169904-83fd39b5d64a",
-  "photo-1504701954957-2010ec3bcec1",
-  "photo-1500099817043-86d46000d58f",
-  "photo-1504184148461-28a8d5d3a659",
-  // 💊 İlaç / Medicine
-  "photo-1584308666744-31be7aca5d39",
-  "photo-1471864190281-a93a3070b6de",
-  "photo-1583912086096-8c60d75a53f9",
-  "photo-1550572017-edd951b55104",
-  "photo-1563213126-a4273aed2016",
-  // 🏥 Eczane / Pharmacy
   "photo-1631549916768-4119b2e5f926",
-  "photo-1585435557343-3b929a53fcb4",
-  "photo-1576671081837-49000212a370",
-  "photo-1587854692152-cbe660dbde88",
-  "photo-1579154341098-e4e158cc7f55",
-  // 🧴 Eczacılık
-  "photo-1512069772995-ec65ed45afd6",
-  "photo-1516841273335-e39b37888115",
-  "photo-1559757175-5700dde675bc",
-  "photo-1598300042247-d088f8ab3a91",
-  "photo-1619468129361-605ebea04b44",
-  // 🏛️ Eski Eczane / Old Pharmacy
-  "photo-1567427017947-545c5f8d16ad",
-  "photo-1530099486328-e021101a494a",
-  "photo-1524492412937-b28074a5d7da",
-  "photo-1506905925346-21bda4d32df4",
-  "photo-1519681393784-d120267933ba",
+  "photo-1584308666744-31be7aca5d39",
 ];
-
 const foto = FOTOLAR[Math.floor(Math.random() * FOTOLAR.length)];
 document.documentElement.style.setProperty(
   "--foto",
   `url('https://images.unsplash.com/${foto}?w=1080&q=88&fit=crop&crop=center')`
 );
 
-// ── Font kombinasyonları (basit, kurgusuz) ──
-const FONTLAR = [
-  { font: "'Cormorant Garamond', serif", weight: "300", italic: false },
-  { font: "'Cormorant Garamond', serif", weight: "400", italic: true  },
-  { font: "'Cormorant Garamond', serif", weight: "600", italic: false },
-  { font: "'Playfair Display', serif",   weight: "400", italic: false },
-  { font: "'Playfair Display', serif",   weight: "700", italic: true  },
-  { font: "'DM Serif Display', serif",   weight: "400", italic: false },
-  { font: "'DM Serif Display', serif",   weight: "400", italic: true  },
-  { font: "'Libre Baskerville', serif",  weight: "400", italic: false },
-  { font: "'Libre Baskerville', serif",  weight: "700", italic: false },
-];
-
-const f  = FONTLAR[Math.floor(Math.random() * FONTLAR.length)];
-const mi = document.getElementById("marka-isim");
-const ec = document.getElementById("eczaci-el");
-mi.style.fontFamily = ec.style.fontFamily = f.font;
-mi.style.fontWeight = f.weight;
-mi.style.fontStyle  = f.italic ? "italic" : "normal";
-ec.style.fontWeight = "300";
-ec.style.fontStyle  = "italic";
-
-// ── Saat ──
+// Saat
 setInterval(() => {
   document.getElementById("saat").innerText = new Date().toLocaleTimeString("tr-TR");
 }, 1000);
 document.getElementById("saat").innerText = new Date().toLocaleTimeString("tr-TR");
 
-// ── Tarih ──
+// Tarih
 (function() {
   const s = new Date();
   const g = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"][s.getDay()];
   const t = s.toLocaleDateString("tr-TR", { day:"numeric", month:"long", year:"numeric" });
   document.getElementById("tarih").innerText = g + "  ·  " + t;
 })();
-
-
-
 </script>
 </body>
 </html>
