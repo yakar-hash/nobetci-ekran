@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+<title>Şifa Eczanesi</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+
+/* ── ARKA PLAN FOTOĞRAF ── */
+.bg-foto {
+  position: fixed; inset: 0; z-index: 0;
+  background-image: url('https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=1080&q=85&fit=crop');
+  background-size: cover;
+  background-position: center;
+  animation: kenBurns 30s ease-in-out infinite alternate;
+  transform-origin: center center;
+}
+@keyframes kenBurns {
+  0%   { transform: scale(1.0) translate(0%, 0%);    }
+  100% { transform: scale(1.08) translate(-2%, -1%); }
+}
+
+/* ── KARANLIK OVERLAY ── */
+.overlay {
+  position: fixed; inset: 0; z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(5,15,10,0.55) 0%,
+    rgba(5,15,10,0.35) 30%,
+    rgba(5,15,10,0.35) 55%,
+    rgba(5,15,10,0.75) 80%,
+    rgba(5,15,10,0.92) 100%
+  );
+}
+
+/* ── LAYOUT ── */
+.screen {
+  position: relative; z-index: 2;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7vh 9vw;
+  color: #fff;
+}
+
+/* ── ÜST: Saat & Tarih ── */
+.ust {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1vh;
+  opacity: 0;
+  animation: fadeUp 1.2s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+}
+.saat {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(48px, 10vw, 88px);
+  font-weight: 200;
+  letter-spacing: 6px;
+  color: rgba(255,255,255,0.90);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+}
+.tarih {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(13px, 2vw, 18px);
+  font-weight: 300;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+}
+
+/* ── ORTA: Marka ── */
+.orta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3vh;
+  opacity: 0;
+  animation: fadeUp 1.2s cubic-bezier(0.22,1,0.36,1) 0.6s forwards;
+}
+
+.havan-icon {
+  opacity: 0.55;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+}
+
+.ayirici-ust {
+  width: 40px; height: 1px;
+  background: rgba(255,255,255,0.35);
+}
+
+.marka-isim {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(52px, 11vw, 100px);
+  font-weight: 300;
+  letter-spacing: 4px;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 4px 32px rgba(0,0,0,0.5);
+  line-height: 1;
+}
+
+.eczaci {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(18px, 3vw, 28px);
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 2px;
+}
+
+.slogan {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(12px, 1.8vw, 17px);
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  text-align: center;
+}
+
+/* ── ALT: QR ── */
+.alt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2vh;
+  opacity: 0;
+  animation: fadeUp 1.2s cubic-bezier(0.22,1,0.36,1) 0.9s forwards;
+}
+
+.qr-wrap {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: clamp(14px,2.5vh,22px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+}
+
+/* QR kod — SVG ile üretiliyor */
+#qr-canvas {
+  display: block;
+  width: clamp(140px, 26vw, 200px);
+  height: clamp(140px, 26vw, 200px);
+  image-rendering: pixelated;
+}
+
+.qr-aciklama {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(11px, 1.6vw, 15px);
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.40);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.wa-ikon { font-size: clamp(14px,2vw,18px); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-foto"></div>
+<div class="overlay"></div>
+
+<div class="screen">
+
+  <!-- Üst: Saat -->
+  <div class="ust">
+    <div class="saat" id="saat">--:--:--</div>
+    <div class="tarih" id="tarih">—</div>
+  </div>
+
+  <!-- Orta: Marka -->
+  <div class="orta">
+    <svg class="havan-icon" width="48" height="48" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect x="58" y="14" width="7" height="34" rx="3.5" fill="rgba(255,255,255,0.7)"/>
+      <ellipse cx="61.5" cy="13" rx="6" ry="4" fill="rgba(255,255,255,0.5)"/>
+      <path d="M14 66 Q17 50 50 50 Q83 50 86 66 L81 83 Q76 91 50 91 Q24 91 19 83 Z"
+            fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M14 66 Q17 50 50 50 Q83 50 86 66"
+            fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <div class="ayirici-ust"></div>
+    <div class="marka-isim">Şifa Eczanesi</div>
+    <div class="eczaci">Ecz. Ercüment Yakar</div>
+    <div class="slogan">Sağlığınız için güvenilir bilgi · güler yüzlü hizmet</div>
+  </div>
+
+  <!-- Alt: QR -->
+  <div class="alt">
+    <div class="qr-wrap">
+      <canvas id="qr-canvas"></canvas>
+    </div>
+    <div class="qr-aciklama">
+      <span class="wa-ikon">💬</span>
+      WhatsApp'tan bize yazın
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── Saat & Tarih ──
+function saatGuncelle() {
+  document.getElementById("saat").innerText = new Date().toLocaleTimeString("tr-TR");
+}
+setInterval(saatGuncelle, 1000);
+saatGuncelle();
+
+function tarihYaz() {
+  const s = new Date();
+  const g = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"][s.getDay()];
+  const t = s.toLocaleDateString("tr-TR", { day:"numeric", month:"long", year:"numeric" });
+  document.getElementById("tarih").innerText = g + "  ·  " + t;
+}
+tarihYaz();
+
+// ── QR Kod Üretici (kütüphanesiz, saf JS) ──
+// WhatsApp linkini QR matrisine dönüştürüp canvas'a çizer
+(function() {
+  const url = "https://wa.me/message/NOYXDMH2X2G4F1";
+
+  const script = document.createElement("script");
+  script.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+  script.onload = function() {
+    const canvas = document.getElementById("qr-canvas");
+    const size = canvas.offsetWidth || 180;
+    new QRCode(canvas, {
+      text: url,
+      width: size,
+      height: size,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  };
+  document.head.appendChild(script);
+})();
+</script>
+</body>
+</html>
